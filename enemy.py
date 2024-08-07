@@ -4,7 +4,7 @@ from settings import *
 
 class Enemies:
     def __init__(self, level):
-        self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
+        self.rect = pygame.Rect(200, 200, WIDTH, HEIGHT)
         self.rect.center = (WIDTH, HEIGHT)
         self.level = level
         
@@ -20,7 +20,7 @@ class Enemies:
         
     def collide_player(self, player):
         if self.rect.colliderect(player):
-            self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
+            self.rect = pygame.Rect(200, 200, WIDTH, HEIGHT)
         else:
             pass
         
@@ -30,6 +30,6 @@ class Enemies:
                 if self.level.grid[row][column] == 1:
                     wall_rect = pygame.Rect((MARGIN + WIDTH) * column + MARGIN, (MARGIN + HEIGHT) * row + MARGIN, WIDTH, HEIGHT)
                     if self.rect.colliderect(wall_rect):
-                        self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
+                        self.rect = pygame.Rect(200, 200, WIDTH, HEIGHT)
                     else:
                         pass
