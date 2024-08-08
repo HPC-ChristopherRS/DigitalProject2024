@@ -4,6 +4,14 @@ from player import *
 from enemy import *
 from settings import *
 
+def draw_start_menu():
+    font = pygame.font.SysFont('arial', 40)
+    pygame.display.update()
+    
+def draw_game_over():
+    font = pygame.font.SysFont('arial', 40)
+    pygame.display.update()
+
 def draw_grid(screen, level):
     for row in range(20):
         for column in range(20):
@@ -48,6 +56,7 @@ def main():
     player = Player(level)
     enemies = Enemies(level)
     clock = pygame.time.Clock()
+    game_state = "game"
     done = False
     last_pressed_time = 0
 
@@ -55,28 +64,37 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+                
+            if game_state == 'start_menu':
+                draw_start_menu()
+                
+            if game_state == 'game_over':
+                draw_game_over()
+            
+
+        if game_state == 'game':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 level = Level(level.level_number + 1)
                 player.rect.topleft = (80, 80) 
 
-        keys = pygame.key.get_pressed()
-        dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 2
-        dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 2
-        player.move(dx, dy, level.grid)
-        enemies.move_towards_player(player) 
-        enemies.collide_player(player)
-        enemies.check_collision()
+            keys = pygame.key.get_pressed()
+            dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 2
+            dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 2
+            player.move(dx, dy, level.grid)
+            enemies.move_towards_player(player) 
+            enemies.collide_player(player)
+            enemies.check_collision()
 
-        current_time = pygame.time.get_ticks()
+            current_time = pygame.time.get_ticks()
 
-        screen.fill(BLACK)
-        draw_grid(screen, level)
-        pygame.draw.rect(screen, (0, 0, 0), enemies.rect)
-        pygame.draw.rect(screen, (255, 200, 0), player.rect)
-        pygame.display.flip()
-        clock.tick(60)
+            screen.fill(BLACK)
+            draw_grid(screen, level)
+            pygame.draw.rect(screen, (0, 0, 0), enemies.rect)
+            pygame.draw.rect(screen, (255, 200, 0), player.rect)
+            pygame.display.flip()
+            clock.tick(60)
 
-        last_pressed_time = handle_dash_input(player, keys, current_time, last_pressed_time, level.grid)
+            last_pressed_time = handle_dash_input(player, keys, current_time, last_pressed_time, level.grid)
 
     pygame.quit()
 
