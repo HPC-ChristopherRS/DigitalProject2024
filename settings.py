@@ -7,3 +7,4 @@ WIDTH, HEIGHT, MARGIN = 32, 32, 1
 COOLDOWN_TIME = 2000
 DASH_DISTANCE = 80
 speed = 2.5
+screen = pygame.display.set_mode((660, 660))
