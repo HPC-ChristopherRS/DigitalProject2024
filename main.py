@@ -50,7 +50,7 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((660, 660))
-    pygame.display.set_caption("Jerry The Epic SpaceMan")
+    pygame.display.set_caption("Jerry The Epic Spaceman")
 
     level = Level(1)
     player = Player(level)

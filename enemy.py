@@ -22,9 +22,9 @@ class Enemies:
         
         if direction.length() != 0:
             towards = direction.normalize()
-            potential_rect = self.rect.move(towards * speed)
+            potential_rect = self.rect.move(towards * enemy_speed)
             if not self.check_collision(potential_rect):
-                self.rect.center += towards * speed
+                self.rect.center += towards * enemy_speed
         
     def collide_player(self, player):
         if self.rect.colliderect(player.rect):
