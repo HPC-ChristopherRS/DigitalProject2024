@@ -89,7 +89,6 @@ def main():
 
             screen.fill(BLACK)
             draw_grid(screen, level)
-            pygame.draw.rect(screen, (0, 0, 0), enemies.rect)
             pygame.draw.rect(screen, (255, 200, 0), player.rect)
             pygame.display.flip()
             clock.tick(60)
