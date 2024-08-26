@@ -4,6 +4,7 @@ from player import Player
 from enemy import Enemies
 from bullet import *
 from settings import *
+from textures import *
 
 def draw_start_menu():
     font = pygame.font.SysFont('arial', 40)
@@ -22,34 +23,6 @@ def update_bullets(bullets, grid, tile_size):
     
     for bullet in to_remove:
         bullets.remove(bullet)
-
-wall_image = pygame.image.load('tiles/rock_wall.png').convert()
-wall_image2 = pygame.image.load('tiles/wall2.png').convert()
-pipe1 = pygame.image.load('tiles/pipe_bottom_left.png').convert()
-background_image = pygame.image.load('tiles/rock_floor.png').convert()
-
-def draw_grid(screen, level):
-    for row in range(20):
-        for column in range(20):
-            if level.get_grid()[row][column] == 1:
-                screen.blit(wall_image, 
-                            [(MARGIN + WIDTH) * column + MARGIN,
-                             (MARGIN + HEIGHT) * row + MARGIN])
-                
-            elif level.get_grid()[row][column] == 2:
-                screen.blit(wall_image2, 
-                            [(MARGIN + WIDTH) * column + MARGIN,
-                             (MARGIN + HEIGHT) * row + MARGIN])
-                
-            elif level.get_grid()[row][column] == 3:
-                screen.blit(pipe1, 
-                            [(MARGIN + WIDTH) * column + MARGIN,
-                             (MARGIN + HEIGHT) * row + MARGIN])
-                
-            else:
-                screen.blit(background_image, 
-                            [(MARGIN + WIDTH) * column + MARGIN,
-                             (MARGIN + HEIGHT) * row + MARGIN])
 
 def handle_dash_input(player, keys, current_time, last_pressed_time):
     if keys[pygame.K_SPACE]:
@@ -133,8 +106,8 @@ def main():
         draw_grid(screen, level)
         for bullet in bullets:
             bullet.draw(screen)
-        pygame.draw.rect(screen, (0, 0, 0), enemies.rect)
         player.draw(screen)
+        enemies.draw(screen)
         pygame.display.flip()
         clock.tick(60)
 

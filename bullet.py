@@ -14,10 +14,9 @@ class Bullet:
             self.dir = (self.dir[0] / length, self.dir[1] / length)
         angle = math.degrees(math.atan2(-self.dir[1], self.dir[0]))
 
-        self.bullet = pygame.Surface((10, 10)).convert_alpha()
-        self.bullet.fill((255, 255, 255))
+        self.bullet = pygame.image.load('tiles/player_bullet.png').convert_alpha()
         self.bullet = pygame.transform.rotate(self.bullet, angle)
-        self.speed = 5
+        self.speed = 4
 
     def update(self):
         self.pos = (self.pos[0] + self.dir[0] * self.speed, 

@@ -34,13 +34,6 @@ class Player:
                         if dy < 0:  # Up
                             self.rect.top = wall_rect.bottom
 
-    def check_collision(self):
-        grid = self.level.get_grid() 
-        for row in range(len(grid)):
-            for column in range(len(grid[0])):
-                if grid[row][column] == 3:
-                     level.load_level(level.level_number + 1)  
-
     def dash(self, direction):
         new_rect = self.rect.copy()
         if direction == 'right':
@@ -70,6 +63,3 @@ class Player:
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
-        
-    def health(self, health):
-        self.health = health

@@ -1,12 +1,15 @@
 import pygame
 from settings import *
+from player import *
 
 class Enemies:
     def __init__(self, level):
         self.level = level
         self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
         self.rect.center = self.spawn_position()
-        
+        self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
+
     def spawn_position(self):
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
@@ -57,3 +60,7 @@ class Enemies:
     def recheck_collisions_on_level_change(self, new_level):
         self.level = new_level
         self.rect.center = self.spawn_position()
+
+    def draw(self, surface):
+        surface.blit(self.image, self.rect.topleft)
+        

@@ -9,3 +9,4 @@ DASH_DISTANCE = 100
 speed = 2.5
 enemy_speed = 5
 screen = pygame.display.set_mode((700, 700))
+health = 5
