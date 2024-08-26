@@ -5,7 +5,7 @@ class Enemies:
     def __init__(self, level):
         self.level = level
         self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
-        self.rect.center= self.spawn_position()
+        self.rect.center = self.spawn_position()
         
     def spawn_position(self):
         for row in range(len(self.level.grid)):
@@ -22,9 +22,9 @@ class Enemies:
         
         if direction.length() != 0:
             towards = direction.normalize()
-            potential_rect = self.rect.move(towards * enemy_speed)
+            potential_rect = self.rect.move(towards * speed)
             if not self.check_collision(potential_rect):
-                self.rect.center += towards * enemy_speed
+                self.rect.center += towards * speed
         
     def collide_player(self, player):
         if self.rect.colliderect(player.rect):
@@ -36,13 +36,21 @@ class Enemies:
             
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
-                if self.level.grid[row][column] == 1:
+                if self.level.grid[row][column] == 1 or self.level.grid[row][column] == 2:
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 
                         WIDTH, HEIGHT)
                     
                     if rect.colliderect(wall_rect):
+                        if rect.left < wall_rect.right:
+                            rect.x -= 3
+                        if rect.right > wall_rect.left:
+                            rect.x += 3
+                        if rect.top < wall_rect.bottom:
+                            rect.y -= 3
+                        if rect.bottom > wall_rect.top:
+                            rect.y += 3  
                         return True
         return False
                     
