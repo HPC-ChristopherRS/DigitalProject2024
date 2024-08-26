@@ -2,6 +2,7 @@ import pygame
 from level import Level
 from player import Player
 from enemy import Enemies
+from bullet import *
 from settings import *
 
 def draw_start_menu():
@@ -11,36 +12,65 @@ def draw_start_menu():
 def draw_game_over():
     font = pygame.font.SysFont('arial', 40)
     pygame.display.update()
+    
+def update_bullets(bullets, grid, tile_size):
+    to_remove = []
+    for bullet in bullets:
+        bullet.update()
+        if bullet.check_collision(grid, tile_size):
+            to_remove.append(bullet)
+    
+    for bullet in to_remove:
+        bullets.remove(bullet)
+
+wall_image = pygame.image.load('tiles/rock_wall.png').convert()
+wall_image2 = pygame.image.load('tiles/wall2.png').convert()
+pipe1 = pygame.image.load('tiles/pipe_bottom_left.png').convert()
+background_image = pygame.image.load('tiles/rock_floor.png').convert()
 
 def draw_grid(screen, level):
     for row in range(20):
         for column in range(20):
-            color = GREEN if level.get_grid()[row][column] == 1 else WHITE
-            pygame.draw.rect(screen, color, 
+            if level.get_grid()[row][column] == 1:
+                screen.blit(wall_image, 
                             [(MARGIN + WIDTH) * column + MARGIN,
-                            (MARGIN + HEIGHT) * row + MARGIN,
-                            WIDTH, HEIGHT])
+                             (MARGIN + HEIGHT) * row + MARGIN])
+                
+            elif level.get_grid()[row][column] == 2:
+                screen.blit(wall_image2, 
+                            [(MARGIN + WIDTH) * column + MARGIN,
+                             (MARGIN + HEIGHT) * row + MARGIN])
+                
+            elif level.get_grid()[row][column] == 3:
+                screen.blit(pipe1, 
+                            [(MARGIN + WIDTH) * column + MARGIN,
+                             (MARGIN + HEIGHT) * row + MARGIN])
+                
+            else:
+                screen.blit(background_image, 
+                            [(MARGIN + WIDTH) * column + MARGIN,
+                             (MARGIN + HEIGHT) * row + MARGIN])
 
 def handle_dash_input(player, keys, current_time, last_pressed_time):
-    if keys[pygame.K_q]:
+    if keys[pygame.K_SPACE]:
         if current_time - last_pressed_time > COOLDOWN_TIME:
             last_pressed_time = current_time
             direction = None
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_d]:
                 direction = 'right'
-                if keys[pygame.K_DOWN]:
+                if keys[pygame.K_s]:
                     direction = 'down-right'
-                elif keys[pygame.K_UP]:
+                elif keys[pygame.K_w]:
                     direction = 'up-right'
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_a]:
                 direction = 'left'
-                if keys[pygame.K_DOWN]:
+                if keys[pygame.K_s]:
                     direction = 'down-left'
-                elif keys[pygame.K_UP]:
+                elif keys[pygame.K_w]:
                     direction = 'up-left'
-            elif keys[pygame.K_DOWN]:
+            elif keys[pygame.K_s]:
                 direction = 'down'
-            elif keys[pygame.K_UP]:
+            elif keys[pygame.K_w]:
                 direction = 'up'
             if direction:
                 player.dash(direction)
@@ -49,13 +79,13 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((660, 660))
     pygame.display.set_caption("Jerry The Epic Spaceman")
 
     level = Level(1)
     player = Player(level)
     enemies = Enemies(level)
     clock = pygame.time.Clock()
+    bullets = []
     game_state = "game"
     done = False
     last_pressed_time = 0
@@ -72,15 +102,26 @@ def main():
                 draw_game_over()
 
             if game_state == 'game':
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     level.load_level(level.level_number + 1)  
                     player.rect.topleft = (80, 80) 
                     player.level = level
                     enemies.level = level
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = player.rect.x + 15, player.rect.y + 15
+                    bullets.append(Bullet(*pos))
+                
+        update_bullets(bullets, level.get_grid(), WIDTH)
+
+        for bullet in bullets[:]:
+            bullet.update()
+            if not screen.get_rect().collidepoint(bullet.pos):
+                bullets.remove(bullet)
 
         keys = pygame.key.get_pressed()
-        dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * 2
-        dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * 2
+        dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
+        dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
         player.move(dx, dy)
         enemies.move_towards_player(player, speed) 
         enemies.collide_player(player)
@@ -90,8 +131,10 @@ def main():
 
         screen.fill(BLACK)
         draw_grid(screen, level)
+        for bullet in bullets:
+            bullet.draw(screen)
         pygame.draw.rect(screen, (0, 0, 0), enemies.rect)
-        pygame.draw.rect(screen, (255, 200, 0), player.rect)
+        player.draw(screen)
         pygame.display.flip()
         clock.tick(60)
 
