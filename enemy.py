@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from settings import *
 from player import *
 
@@ -9,13 +9,21 @@ class Enemies:
         self.rect.center = self.spawn_position()
         self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
-
+        
+    def spawn(self):    
+       for row in range(len(self.level.grid)):
+            for column in range(len(self.level.grid[0])):
+                if self.level.grid[row][column] == 0:  
+                    x = random.randint(500,500)
+                    y = random.randint(500,500)
+                    return (x, y)
+                
     def spawn_position(self):
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
                 if self.level.grid[row][column] == 0:  
-                    x = 200
-                    y = 200
+                    x = random.randint(100,600)
+                    y = random.randint(100,600)
                     return (x, y)
         
     def move_towards_player(self, player, speed):
@@ -31,7 +39,7 @@ class Enemies:
         
     def collide_player(self, player):
         if self.rect.colliderect(player.rect):
-            self.rect.center = self.spawn_position()
+            self.rect.center = self.spawn()
         
     def check_collision(self, rect=None):
         if rect is None:
@@ -64,3 +72,4 @@ class Enemies:
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
         
+    
