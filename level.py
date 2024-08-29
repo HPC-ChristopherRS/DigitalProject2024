@@ -11,7 +11,6 @@ class Level:
         for row in range(20):
             grid[0][row] = grid[row][0] = grid[19][row] = grid[row][19] = 1
 
-
         if self.level_number == 1:
             for column in range(8, 12):
                 grid[4][column] = 1

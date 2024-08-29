@@ -100,7 +100,7 @@ def main():
         dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
         player.move(dx, dy)
         enemies.move_towards_player(player, speed) 
-        enemies.collide_player(player)
+        enemies.collide_player(player, bullet_rect)
         enemies.check_collision()
         enemies2.move_towards_player(player, speed) 
         enemies2.collide_player(player)

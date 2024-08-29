@@ -1,6 +1,7 @@
 import pygame, random
 from settings import *
 from player import *
+from bullet import *
 
 class Enemies:
     def __init__(self, level):
@@ -37,8 +38,10 @@ class Enemies:
             if not self.check_collision(potential_rect):
                 self.rect.center += towards * speed
         
-    def collide_player(self, player):
+    def collide_player(self, player, bullet_rect):
         if self.rect.colliderect(player.rect):
+            self.rect.center = self.spawn()
+        elif self.rect.colliderect(bullet_rect):
             self.rect.center = self.spawn()
         
     def check_collision(self, rect=None):
