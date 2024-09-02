@@ -1,10 +1,10 @@
 import pygame
-from level import Level
+from level import *
 from player import Player
 from enemy import *
 from bullet import *
 from settings import *
-from textures import *
+from textures import *   
 
 def draw_start_menu():
     font = pygame.font.SysFont('arial', 40)
@@ -57,13 +57,12 @@ def main():
     level = Level(1)
     player = Player(level)
     enemies = Enemies(level)
-    enemies2 = Enemies(level)
     clock = pygame.time.Clock()
     bullets = []
+    enememe = []
     game_state = "game"
     done = False
     last_pressed_time = 0
-    
 
     while not done:
         for event in pygame.event.get():
@@ -82,11 +81,22 @@ def main():
                     player.rect.topleft = (80, 80) 
                     player.level = level
                     enemies.level = level
-                    enemies2.level = level
                 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = player.rect.x + 15, player.rect.y + 15
                     bullets.append(Bullet(*pos))
+                 
+                if level.level_number == 1:
+                    enememe.append(Enemies(level))
+                    enememe.append(Enemies(level))
+                    enememe.append(Enemies(level))
+                    enememe.append(Enemies(level))
+                    enememe.append(Enemies(level))
+                    enememe.append(Enemies(level))
+                elif level.level_number != 1:
+                    enememe.clear()
+                    enememe.append(Enemies(level))
+                    
                 
         update_bullets(bullets, level.get_grid(), WIDTH)
 
@@ -99,21 +109,19 @@ def main():
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
         dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
         player.move(dx, dy)
-        enemies.move_towards_player(player, speed) 
-        enemies.collide_player(player, bullet_rect)
-        enemies.check_collision()
-        enemies2.move_towards_player(player, speed) 
-        enemies2.collide_player(player)
-        enemies2.check_collision()
         current_time = pygame.time.get_ticks()
 
         screen.fill(BLACK)
         draw_grid(screen, level)
         for bullet in bullets:
             bullet.draw(screen)
+        for enemies in enememe:
+            enemies.move_towards_player(player, speed) 
+            enemies.check_collision()
+            enemies.collide_player(player)
+            enemies.draw(screen)
         player.draw(screen)
         enemies.draw(screen)
-        enemies2.draw(screen)
         pygame.display.flip()
         clock.tick(60)
 

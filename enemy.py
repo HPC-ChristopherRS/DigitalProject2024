@@ -37,11 +37,9 @@ class Enemies:
             potential_rect = self.rect.move(towards * speed)
             if not self.check_collision(potential_rect):
                 self.rect.center += towards * speed
-        
-    def collide_player(self, player, bullet_rect):
+
+    def collide_player(self, player):
         if self.rect.colliderect(player.rect):
-            self.rect.center = self.spawn()
-        elif self.rect.colliderect(bullet_rect):
             self.rect.center = self.spawn()
         
     def check_collision(self, rect=None):
@@ -67,10 +65,6 @@ class Enemies:
                             rect.y += 3  
                         return True
         return False
-                    
-    def recheck_collisions_on_level_change(self, new_level):
-        self.level = new_level
-        self.rect.center = self.spawn_position()
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)

@@ -1,7 +1,7 @@
 import pygame
 import math
 from settings import *
-#make bullet into a rect to handle collisions
+
 class Bullet:
     def __init__(self, x, y):
         self.pos = (x, y)
