@@ -5,17 +5,17 @@ from settings import *
 class Bullet:
     def __init__(self, x, y):
         self.pos = (x, y)
-        mx, my = pygame.mouse.get_pos()
-        self.dir = (mx - x, my - y)
-        length = math.hypot(*self.dir)
-        if length == 0.0:
+        self.mx, self.my = pygame.mouse.get_pos()
+        self.dir = (self.mx - x, self.my - y)
+        self.length = math.hypot(*self.dir)
+        if self.length == 0.0:
             self.dir = (0, -1)
         else:
-            self.dir = (self.dir[0] / length, self.dir[1] / length)
-        angle = math.degrees(math.atan2(-self.dir[1], self.dir[0]))
+            self.dir = (self.dir[0] / self.length, self.dir[1] / self.length)
+        self.angle = math.degrees(math.atan2(-self.dir[1], self.dir[0]))
 
         self.bullet = pygame.image.load('tiles/player_bullet.png').convert_alpha()
-        self.bullet = pygame.transform.rotate(self.bullet, angle)
+        self.bullet = pygame.transform.rotate(self.bullet, self.angle)
         self.speed = 4
 
     def update(self):

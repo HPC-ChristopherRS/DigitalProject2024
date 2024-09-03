@@ -1,6 +1,7 @@
 import pygame, random
 from settings import *
 from player import *
+from bullet import *
 
 class Enemies:
     def __init__(self, level, existing_enemies):
@@ -36,7 +37,7 @@ class Enemies:
             if not self.check_collision(potential_rect):
                 self.rect.center += towards * speed
         
-    def collide_player(self, player, existing_enemies):
+    def collide_player(self, player):
         if self.rect.colliderect(player.rect):
             self.rect.center = self.spawn_position()
         
@@ -63,10 +64,6 @@ class Enemies:
                             rect.y += 3  
                         return True
         return False
-                    
-    def recheck_collisions_on_level_change(self, new_level):
-        self.level = new_level
-        self.rect.center = self.spawn_position()
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
