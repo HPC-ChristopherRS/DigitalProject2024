@@ -1,6 +1,7 @@
 import pygame
 import math
 from settings import *
+from enemy import *
 
 class Bullet:
     def __init__(self, x, y):
@@ -16,15 +17,16 @@ class Bullet:
 
         self.bullet = pygame.image.load('tiles/player_bullet.png').convert_alpha()
         self.bullet = pygame.transform.rotate(self.bullet, self.angle)
+        self.rect = self.bullet.get_rect(center=self.pos)
         self.speed = 4
 
     def update(self):
         self.pos = (self.pos[0] + self.dir[0] * self.speed, 
                     self.pos[1] + self.dir[1] * self.speed)
+        self.rect.center = self.pos 
 
     def draw(self, surf):
-        bullet_rect = self.bullet.get_rect(center=self.pos)
-        surf.blit(self.bullet, bullet_rect)
+        surf.blit(self.bullet, self.rect)
 
     def check_collision(self, grid, tile_size):
         x, y = self.pos
@@ -35,4 +37,5 @@ class Bullet:
             if grid[row][col] == 1 or grid[row][col] == 2:
                 return True
         return False
+
 

@@ -56,79 +56,69 @@ def main():
 
     level = Level(1)
     player = Player(level)
-    enemy = []
-    num_enemies = 5
-    for _ in range(num_enemies):
-        enemies = Enemies(level, enemy)
-        enemy.append(enemies)
+    enemies = []
     clock = pygame.time.Clock()
     bullets = []
-    enememe = []
     game_state = "game"
     done = False
     last_pressed_time = 0
 
+    def spawn_enemies(level_number):
+        num_enemies = 10
+        if level_number == 2:
+            num_enemies = 1
+        elif level_number == 3:
+            num_enemies = 10
+
+        for _ in range(num_enemies):
+            enemies.append(Enemies(level))
+
+    spawn_enemies(level.level_number)
+
     while not done:
+        current_time = pygame.time.get_ticks()
+        keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-                
             if game_state == 'start_menu':
                 draw_start_menu()
-                
-            if game_state == 'game_over':
+            elif game_state == 'game_over':
                 draw_game_over()
-
-            if game_state == 'game':
+            elif game_state == 'game':
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    level.load_level(level.level_number + 1)  
-                    player.rect.topleft = (80, 80) 
+                    level.load_level(level.level_number + 1)
+                    player.rect.topleft = (80, 80)
                     player.level = level
-                    enemies.level = level
-                
+                    enemies.clear()
+                    spawn_enemies(level.level_number)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = player.rect.x + 15, player.rect.y + 15
                     bullets.append(Bullet(*pos))
-                 
-                if level.level_number == 1:
-                    enememe.append(Enemies(level))
-                    enememe.append(Enemies(level))
-                    enememe.append(Enemies(level))
-                    enememe.append(Enemies(level))
-                    enememe.append(Enemies(level))
-                    enememe.append(Enemies(level))
-                elif level.level_number != 1:
-                    enememe.clear()
-                    enememe.append(Enemies(level))
-                    
-                
+
         update_bullets(bullets, level.get_grid(), WIDTH)
 
         for bullet in bullets[:]:
-            bullet.update()
-            if not screen.get_rect().collidepoint(bullet.pos):
-                bullets.remove(bullet)
+            for enemy in enemies[:]:
+                if bullet.rect.colliderect(enemy.rect):
+                    print("hit kapopwow") 
+                    bullets.remove(bullet)
+                    enemies.remove(enemy)
+                    break  
 
-        keys = pygame.key.get_pressed()
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
         dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
         player.move(dx, dy)
-        enemies.move_towards_player(player, speed) 
-        enemies.collide_player(player)
-        enemies.check_collision()
-        current_time = pygame.time.get_ticks()
-
         screen.fill(BLACK)
         draw_grid(screen, level)
         for bullet in bullets:
             bullet.draw(screen)
-        for enemies in enememe:
-            enemies.move_towards_player(player, speed) 
-            enemies.check_collision()
-            enemies.collide_player(player)
-            enemies.draw(screen)
+        for enemy in enemies:
+            enemy.move_towards_player(player, speed)
+            enemy.check_collision()
+            enemy.collide_player(player)
+            enemy.draw(screen)
         player.draw(screen)
-        enemies.draw(screen)
         pygame.display.flip()
         clock.tick(60)
 
