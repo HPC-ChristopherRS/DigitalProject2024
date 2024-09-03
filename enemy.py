@@ -3,28 +3,27 @@ from settings import *
 from player import *
 
 class Enemies:
-    def __init__(self, level):
+    def __init__(self, level, existing_enemies):
         self.level = level
         self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
-        self.rect.center = self.spawn_position()
+        self.rect.center = self.spawn_position(existing_enemies)
         self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
         
-    def spawn(self):    
-       for row in range(len(self.level.grid)):
-            for column in range(len(self.level.grid[0])):
-                if self.level.grid[row][column] == 0:  
-                    x = random.randint(500,500)
-                    y = random.randint(500,500)
-                    return (x, y)
-                
-    def spawn_position(self):
-        for row in range(len(self.level.grid)):
-            for column in range(len(self.level.grid[0])):
-                if self.level.grid[row][column] == 0:  
-                    x = random.randint(100,600)
-                    y = random.randint(100,600)
-                    return (x, y)
+    def spawn_position(self, existing_enemies):
+        while True:
+            x = random.randint(100, 600)
+            y = random.randint(100, 600)
+            new_rect = pygame.Rect(x, y, WIDTH, HEIGHT)
+        
+            overlap = False
+            for enemy in existing_enemies:
+                if new_rect.colliderect(enemy.rect):
+                    overlap = True
+                    break
+        
+            if not overlap:
+                return (x, y)
         
     def move_towards_player(self, player, speed):
         enemy_vector = pygame.Vector2(self.rect.center)
@@ -37,9 +36,9 @@ class Enemies:
             if not self.check_collision(potential_rect):
                 self.rect.center += towards * speed
         
-    def collide_player(self, player):
+    def collide_player(self, player, existing_enemies):
         if self.rect.colliderect(player.rect):
-            self.rect.center = self.spawn()
+            self.rect.center = self.spawn_position()
         
     def check_collision(self, rect=None):
         if rect is None:

@@ -56,8 +56,11 @@ def main():
 
     level = Level(1)
     player = Player(level)
-    enemies = Enemies(level)
-    enemies2 = Enemies(level)
+    enemy = []
+    num_enemies = 5
+    for _ in range(num_enemies):
+        enemies = Enemies(level, enemy)
+        enemy.append(enemies)
     clock = pygame.time.Clock()
     bullets = []
     game_state = "game"
@@ -82,7 +85,6 @@ def main():
                     player.rect.topleft = (80, 80) 
                     player.level = level
                     enemies.level = level
-                    enemies2.level = level
                 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = player.rect.x + 15, player.rect.y + 15
@@ -102,9 +104,6 @@ def main():
         enemies.move_towards_player(player, speed) 
         enemies.collide_player(player)
         enemies.check_collision()
-        enemies2.move_towards_player(player, speed) 
-        enemies2.collide_player(player)
-        enemies2.check_collision()
         current_time = pygame.time.get_ticks()
 
         screen.fill(BLACK)
@@ -113,7 +112,6 @@ def main():
             bullet.draw(screen)
         player.draw(screen)
         enemies.draw(screen)
-        enemies2.draw(screen)
         pygame.display.flip()
         clock.tick(60)
 
