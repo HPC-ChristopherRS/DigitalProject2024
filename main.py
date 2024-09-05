@@ -1,10 +1,12 @@
+from math import e
 import pygame
 from level import *
 from player import Player
 from enemy import *
 from bullet import *
 from settings import *
-from textures import *   
+from textures import *  
+from objects import *
 
 def draw_start_menu():
     font = pygame.font.SysFont('arial', 40)
@@ -52,16 +54,17 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
 
 def main():
     pygame.init()
-    pygame.display.set_caption("Jerry The Epic Spaceman")
+    pygame.display.set_caption("Jerry the Epic Spaceman")
 
     level = Level(1)
     player = Player(level, health)
     enemies = []
-    clock = pygame.time.Clock()
+    object_list = []
     bullets = []
     game_state = "game"
     done = False
     last_pressed_time = 0
+    clock = pygame.time.Clock()
 
     def spawn_enemies(level_number):
         num_enemies = 5
@@ -72,8 +75,19 @@ def main():
 
         for _ in range(num_enemies):
             enemies.append(Enemies(level, health))
+            
+    def spawn_objects(level_number):
+        obj_number = 2
+        if level_number == 2:
+            obj_number = 1
+        elif level_number == 3:
+            obj_number = 10
+
+        for _ in range(obj_number):
+            object_list.append(Object(level))
 
     spawn_enemies(level.level_number)
+    spawn_objects(level.level_number)
 
     while not done:
         current_time = pygame.time.get_ticks()
@@ -92,6 +106,7 @@ def main():
                     player.level = level
                     enemies.clear()
                     spawn_enemies(level.level_number)
+                    spawn_objects(level.level_number)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]: # Left click
                         pos = player.rect.x + 15, player.rect.y + 15
@@ -109,6 +124,12 @@ def main():
                         enemies.remove(enemy)
                     break
 
+        for objects in object_list[:]:
+            for objects in object_list[:]:
+                if player.rect.colliderect(objects.rect):
+                    object_list.remove(objects)
+                    break
+
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
         dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
         player.move(dx, dy)
@@ -121,6 +142,9 @@ def main():
             enemy.check_collision()
             enemy.collide_player(player)
             enemy.draw(screen)
+        for objects in object_list:
+            objects.draw(screen)            
+
         player.draw(screen)
         pygame.display.flip()
         clock.tick(60)
