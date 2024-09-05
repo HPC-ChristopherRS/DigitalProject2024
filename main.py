@@ -55,7 +55,7 @@ def main():
     pygame.display.set_caption("Jerry The Epic Spaceman")
 
     level = Level(1)
-    player = Player(level)
+    player = Player(level, health)
     enemies = []
     clock = pygame.time.Clock()
     bullets = []
@@ -64,14 +64,14 @@ def main():
     last_pressed_time = 0
 
     def spawn_enemies(level_number):
-        num_enemies = 10
+        num_enemies = 5
         if level_number == 2:
             num_enemies = 1
         elif level_number == 3:
             num_enemies = 10
 
         for _ in range(num_enemies):
-            enemies.append(Enemies(level))
+            enemies.append(Enemies(level, health))
 
     spawn_enemies(level.level_number)
 
@@ -93,18 +93,21 @@ def main():
                     enemies.clear()
                     spawn_enemies(level.level_number)
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = player.rect.x + 15, player.rect.y + 15
-                    bullets.append(Bullet(*pos))
+                    if pygame.mouse.get_pressed()[0]: # Left click
+                        pos = player.rect.x + 15, player.rect.y + 15
+                        bullets.append(Bullet(*pos))
 
         update_bullets(bullets, level.get_grid(), WIDTH)
 
         for bullet in bullets[:]:
             for enemy in enemies[:]:
                 if bullet.rect.colliderect(enemy.rect):
-                    print("hit kapopwow") 
+                    enemy.health -= 1
+                    print(enemy.health)
                     bullets.remove(bullet)
-                    enemies.remove(enemy)
-                    break  
+                    if enemy.health == 0:
+                        enemies.remove(enemy)
+                    break
 
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
         dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2

@@ -2,11 +2,12 @@ import pygame
 from settings import *
 
 class Player:
-    def __init__(self, level):
+    def __init__(self, level, health):
         self.level = level
         self.rect = pygame.Rect(100, 100, WIDTH, HEIGHT)
         self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
+        self.health = 5
 
     def move(self, dx, dy):
         self.rect.x += dx * 1.5

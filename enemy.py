@@ -4,12 +4,13 @@ from player import *
 from bullet import *
 
 class Enemies:
-    def __init__(self, level):
+    def __init__(self, level, health):
         self.level = level
         self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
         self.rect.center = self.spawn_position()
-        self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
+        self.image = pygame.image.load('tiles/jerrbear.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
+        self.health = 5
         
     def spawn(self):    
        for row in range(len(self.level.grid)):
@@ -41,7 +42,11 @@ class Enemies:
     def collide_player(self, player):
         if self.rect.colliderect(player.rect):
             self.rect.center = self.spawn()
-        
+            player.health -= 1
+            print(player.health)
+            if player.health == 0:
+                pygame.quit()
+                
     def check_collision(self, rect=None):
         if rect is None:
             rect = self.rect
