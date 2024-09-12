@@ -4,9 +4,9 @@ from settings import *
 class Object():
     def __init__(self, level):
         self.level = level
-        self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
+        self.rect = pygame.Rect(0, 0, 26, 26)
         self.rect.center = self.spawn_position()
-        self.image = pygame.image.load('tiles/key2.png').convert_alpha()
+        self.image = pygame.image.load('items/power.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
         
     def spawn_position(self):

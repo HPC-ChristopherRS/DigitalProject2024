@@ -67,7 +67,7 @@ def main():
     clock = pygame.time.Clock()
 
     def spawn_enemies(level_number):
-        num_enemies = 5
+        num_enemies = 1
         if level_number == 2:
             num_enemies = 1
         elif level_number == 3:
@@ -105,6 +105,7 @@ def main():
                     player.rect.topleft = (80, 80)
                     player.level = level
                     enemies.clear()
+                    object_list.clear()
                     spawn_enemies(level.level_number)
                     spawn_objects(level.level_number)
                 if event.type == pygame.MOUSEBUTTONDOWN:

@@ -45,7 +45,7 @@ class Enemies:
             player.health -= 1
             print(player.health)
             if player.health == 0:
-                pygame.quit()
+                pass
                 
     def check_collision(self, rect=None):
         if rect is None:
