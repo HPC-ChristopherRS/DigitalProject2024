@@ -112,6 +112,7 @@ def main():
                     if pygame.mouse.get_pressed()[0]: # Left click
                         pos = player.rect.x + 15, player.rect.y + 15
                         bullets.append(Bullet(*pos))
+                  
 
         update_bullets(bullets, level.get_grid(), WIDTH)
 
