@@ -1,4 +1,5 @@
 import pygame, random
+from main import *
 from settings import *
 from player import *
 from bullet import *

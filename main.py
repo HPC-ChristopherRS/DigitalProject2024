@@ -1,7 +1,6 @@
-from math import e
 import pygame
 from level import *
-from player import Player
+from player import *
 from enemy import *
 from bullet import *
 from settings import *
@@ -58,6 +57,7 @@ def main():
 
     level = Level(1)
     player = Player(level, health)
+    bullet_dmg = 1
     enemies = []
     object_list = []
     bullets = []
@@ -77,7 +77,7 @@ def main():
             enemies.append(Enemies(level, health))
             
     def spawn_objects(level_number):
-        obj_number = 2
+        obj_number = 100
         if level_number == 2:
             obj_number = 1
         elif level_number == 3:
@@ -119,10 +119,10 @@ def main():
         for bullet in bullets[:]:
             for enemy in enemies[:]:
                 if bullet.rect.colliderect(enemy.rect):
-                    enemy.health -= 1
+                    enemy.health -= bullet_dmg
                     print(enemy.health)
                     bullets.remove(bullet)
-                    if enemy.health == 0:
+                    if enemy.health <= 0:
                         enemies.remove(enemy)
                     break
 
@@ -130,6 +130,8 @@ def main():
             for objects in object_list[:]:
                 if player.rect.colliderect(objects.rect):
                     object_list.remove(objects)
+                    bullet_dmg += 0.1
+                    print(int(bullet_dmg))
                     break
 
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
