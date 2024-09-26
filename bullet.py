@@ -18,7 +18,7 @@ class Bullet:
         self.bullet = pygame.image.load('tiles/player_bullet.png').convert_alpha()
         self.bullet = pygame.transform.rotate(self.bullet, self.angle)
         self.rect = self.bullet.get_rect(center=self.pos)
-        self.speed = 4
+        self.speed = 5
 
     def update(self):
         self.pos = (self.pos[0] + self.dir[0] * self.speed, 
@@ -37,5 +37,3 @@ class Bullet:
             if grid[row][col] == 1 or grid[row][col] == 2 or grid[row][col] == 3 or grid[row][col] == 4 or grid[row][col] == 5 or grid[row][col] == 6 or grid[row][col] == 7 or grid[row][col] == 8 or grid[row][col] == 9 or grid[row][col] == 10 or grid[row][col] == 11 or grid[row][col] == 12:
                 return True
         return False
-
-

@@ -55,6 +55,7 @@ def main():
     player = Player(level, health)
     bullet_dmg = 1
     bomb = 1
+    score = 0
     enemies = []
     object_list = []
     bullets = []
@@ -66,7 +67,7 @@ def main():
     def update_text():
         texts = [
             (my_font4.render("Level: " + str(round(level.level_number)), 40, WHITE), (750, 30)),
-            (my_font.render("Score: " + str(round(bullet_dmg, 1)), 40, WHITE), (715, 90)),
+            (my_font.render("Score: " + str(round(score, 1)), 40, WHITE), (715, 90)),
             (my_font.render("Health: " + str(round(player.health, 1)), 40, WHITE), (715, 125)),
             (my_font.render("Power: " + str(round(bullet_dmg, 1)) + "/4", 40, WHITE), (715, 160)),
             (my_font.render("Bomb: " + str(round(bomb)), 40, WHITE), (715, 195)),
@@ -79,6 +80,12 @@ def main():
 
         for text, pos in texts:
             screen.blit(text, pos)
+            
+        screen.blit(coin_png, (680, 87))
+        screen.blit(jerry, (680, 122))
+        screen.blit(power_png, (680, 157))
+        screen.blit(bomb_png, (680, 192))
+        screen.blit(duck_png, (705, 335))
 
     def draw_start_menu(screen):
         screen.fill((0,0,0))
@@ -104,7 +111,7 @@ def main():
             enemies.append(Enemies(level, health))
             
     def spawn_objects(level_number):
-        obj_number = 100
+        obj_number = 0
         if level_number == 2:
             obj_number = 1
         elif level_number == 3:
@@ -169,6 +176,7 @@ def main():
                         bullets.remove(bullet)
                         if enemy.health <= 0:
                             enemies.remove(enemy)
+                            score += 100
                         break
 
             for objects in object_list[:]:
@@ -176,8 +184,10 @@ def main():
                     object_list.remove(objects)
                     if bullet_dmg != 4:
                         bullet_dmg += 0.1
+                        score += 10
                     else:
                         bullet_dmg = 4
+                        score += 10
                     break
 
             dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
