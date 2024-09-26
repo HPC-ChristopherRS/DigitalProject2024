@@ -19,6 +19,8 @@ textures = {
 background_image = pygame.image.load('tiles/rock_floor.png').convert()
 background_image2 = pygame.image.load('tiles/floor2.png').convert()
 
+inventory = pygame.image.load("tiles/in.png").convert()
+
 def draw_grid(screen, level):
     grid = level.get_grid()
     if level.level_number == 2 or level.level_number == 3:

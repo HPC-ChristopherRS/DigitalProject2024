@@ -36,6 +36,8 @@ class Player:
                         if dy < 0:  # Up
                             self.rect.top = wall_rect.bottom
    
+                        if grid[row][column] == 3:
+                             self.level.load_level(self.level.level_number + 1)
 
     def dash(self, direction):
         new_rect = self.rect.copy()
