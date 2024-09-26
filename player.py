@@ -20,7 +20,7 @@ class Player:
         grid = self.level.get_grid() 
         for row in range(len(grid)):
             for column in range(len(grid[0])):
-                if grid[row][column] == 1 or grid[row][column] == 2 or grid[row][column] == 3 or grid[row][column] == 4 or grid[row][column] == 5 or grid[row][column] == 6 or grid[row][column] == 8 or grid[row][column] == 9 or grid[row][column] == 10 or grid[row][column] == 11 or grid[row][column] == 12:
+                if grid[row][column] == 1 or grid[row][column] == 2 or grid[row][column] == 3 or grid[row][column] == 4 or grid[row][column] == 5 or grid[row][column] == 6 or grid[row][column] == 7 or grid[row][column] == 8 or grid[row][column] == 9 or grid[row][column] == 10 or grid[row][column] == 11 or grid[row][column] == 12:
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 

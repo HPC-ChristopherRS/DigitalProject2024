@@ -8,5 +8,5 @@ COOLDOWN_TIME = 2000
 DASH_DISTANCE = 100
 speed = 2.5
 enemy_speed = 5
-screen = pygame.display.set_mode((700, 700))
+screen = pygame.display.set_mode((960, 640))
 health = 5

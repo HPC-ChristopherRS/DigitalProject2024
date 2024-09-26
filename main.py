@@ -54,6 +54,7 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
 def main():
     pygame.init()
     pygame.display.set_caption("Jerry the Epic Spaceman")
+    my_font=pygame.font.Font("Daydream.ttf", 20)
 
     level = Level(1)
     player = Player(level, health)
@@ -65,6 +66,14 @@ def main():
     done = False
     last_pressed_time = 0
     clock = pygame.time.Clock()
+    
+    def update_shit():
+        text1=my_font.render("Power: " + str(round(bullet_dmg, 1)),40,WHITE)
+        text2=my_font.render("Health: " + str(round(player.health,1)),40,WHITE)
+        text3=my_font.render("Bomb: " + "",40,WHITE)
+        screen.blit(text1,(660,10))
+        screen.blit(text2,(660,60))
+        screen.blit(text3,(660,110))
 
     def spawn_enemies(level_number):
         num_enemies = 1
@@ -112,7 +121,8 @@ def main():
                     if pygame.mouse.get_pressed()[0]: # Left click
                         pos = player.rect.x + 15, player.rect.y + 15
                         bullets.append(Bullet(*pos))
-                  
+                if bullet_dmg >= 5:
+                    bullet_dmg = 5
 
         update_bullets(bullets, level.get_grid(), WIDTH)
 
@@ -130,8 +140,11 @@ def main():
             for objects in object_list[:]:
                 if player.rect.colliderect(objects.rect):
                     object_list.remove(objects)
-                    bullet_dmg += 0.1
-                    print(int(bullet_dmg))
+                    if bullet_dmg != 5:
+                        bullet_dmg += 0.1
+                    else:
+                        bullet_dmg = 5
+                    print(round(bullet_dmg, 2))
                     break
 
         dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
@@ -150,6 +163,7 @@ def main():
             objects.draw(screen)            
 
         player.draw(screen)
+        update_shit()
         pygame.display.flip()
         clock.tick(60)
 

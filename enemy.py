@@ -54,7 +54,7 @@ class Enemies:
             
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
-                if self.level.grid[row][column] == 1 or self.level.grid[row][column] == 2:
+                if self.level.grid[row][column] == 1 or self.level.grid[row][column] == 2 or self.level.grid[row][column] == 3 or self.level.grid[row][column] == 4 or self.level.grid[row][column] == 5 or self.level.grid[row][column] == 6 or self.level.grid[row][column] == 7 or self.level.grid[row][column] == 8 or self.level.grid[row][column] == 9 or self.level.grid[row][column] == 10 or self.level.grid[row][column] == 11 or self.level.grid[row][column] == 12:
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 
