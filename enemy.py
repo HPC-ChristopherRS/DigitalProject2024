@@ -4,6 +4,9 @@ from settings import *
 from player import *
 from bullet import *
 
+enemy_x = [(30),(600)]
+enemy_y = [(30),(600)]
+
 class Enemies:
     def __init__(self, level, health):
         self.level = level
@@ -17,16 +20,16 @@ class Enemies:
        for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
                 if self.level.grid[row][column] == 0:  
-                    x = random.randint(500,500)
-                    y = random.randint(500,500)
+                    x = random.choice(enemy_x)
+                    y = random.choice(enemy_y)
                     return (x, y)
                 
     def spawn_position(self):
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
                 if self.level.grid[row][column] == 0:  
-                    x = random.randint(20,600)
-                    y = random.randint(20,600)
+                    x = random.choice(enemy_x)
+                    y = random.choice(enemy_y)
                     return (x, y)
         
     def move_towards_player(self, player, speed):
