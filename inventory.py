@@ -37,4 +37,4 @@ def inventory_grid():
         image = pygame.image.load(item)
         image = pygame.transform.scale(image, (CELL_SIZE, CELL_SIZE))
         screen.blit(image, (x, y))
-        
+
