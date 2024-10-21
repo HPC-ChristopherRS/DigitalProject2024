@@ -6,7 +6,9 @@ from bullet import *
 from settings import *
 from textures import *  
 from objects import *
+from inventory import *  
 
+#checks for collision and sets those that collide to a list that they are then removed from
 def update_bullets(bullets, grid, tile_size):
     to_remove = []
     for bullet in bullets:
@@ -17,6 +19,7 @@ def update_bullets(bullets, grid, tile_size):
     for bullet in to_remove:
         bullets.remove(bullet)
 
+#handles dash input for the player, setting direction based on keys pressed which is then used to handle the dash direction in the player 
 def handle_dash_input(player, keys, current_time, last_pressed_time):
     if keys[pygame.K_SPACE]:
         if current_time - last_pressed_time > COOLDOWN_TIME:
@@ -40,66 +43,90 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
                 direction = 'up'
             if direction:
                 player.dash(direction)
-
+    
+    #timer for dash cooldown
     return last_pressed_time
 
+#draws fade out effect for bombs, levels, and pretty much everything I love this thing
+def draw_fade_out(screen, alpha):
+    fade_surface = pygame.Surface((640, 640)) #rect
+    fade_surface.fill((255, 255, 255)) #color
+    fade_surface.set_alpha(alpha) #alpha value
+    screen.blit(fade_surface, (0, 0)) #draw
+
+#the main loop :D
 def main():
     pygame.init()
-    pygame.display.set_caption("Jerry the Epic Spaceman")
-    
+    pygame.display.set_caption("Jerry the Epic Spaceman") #games fantastic title
+
+    #Font imports/setup
     my_font = pygame.font.Font("Daydream.ttf", 20)
     my_font2 = pygame.font.Font("Daydream.ttf", 8)
     my_font4 = pygame.font.Font("Daydream.ttf", 15)
 
-    level = Level(1)
-    player = Player(level, health)
-    bullet_dmg = 1
-    bomb = 1
-    score = 0
-    enemies = []
-    object_list = []
-    bullets = []
-    game_state = "start_menu"
-    done = False
-    last_pressed_time = 0
-    clock = pygame.time.Clock()
-    
+    #General variables level, player, objects, game setup, etc
+    level = Level(1) #level one
+    health = 5 #health
+    pos_x = 100 #starting x position
+    pos_y = 100 #starting y position
+    player = Player(level, health, pos_x, pos_y) #inizalise player
+    bullet_dmg = 1 #set bullet damage
+    bomb = 3 #starting bomb amount
+    score = 0 #score
+    enemies = [] #list for enemies to spawn
+    power_list = [] #list for powers to spawn
+    object_list = [] #list for objects to spawn
+    bullets = [] #list for bullets to spawn
+    game_state = "start_menu" #initial game state
+    done = False #game loop setup variable
+    secret_ending = False #...
+    last_pressed_time = 0 #timer setup variable for dash cooldown
+    clock = pygame.time.Clock() #clock setup
+
+    #fading variables
+    fade_alpha = 0 #fully transparent
+    fading = False
+
     def update_text():
+        #Set up for text function as they constantly change
         texts = [
-            (my_font4.render("Level: " + str(round(level.level_number)), 40, WHITE), (750, 30)),
-            (my_font.render("Score: " + str(round(score, 1)), 40, WHITE), (715, 90)),
-            (my_font.render("Health: " + str(round(player.health, 1)), 40, WHITE), (715, 125)),
-            (my_font.render("Power: " + str(round(bullet_dmg, 1)) + "/4", 40, WHITE), (715, 160)),
-            (my_font.render("Bomb: " + str(round(bomb)), 40, WHITE), (715, 195)),
-            (my_font2.render("Jerry the Epic Spaceman", 40, WHITE), (650, 620)),
-            (my_font2.render(str(round(clock.get_fps(), 1)) + " FPS", 40, WHITE), (890, 620)),
-            (my_font2.render("-------------------------------", 40, WHITE), (660, 65)),
-            (my_font2.render("-------------------------------", 40, WHITE), (660, 240)),
-            (my_font4.render("Inventory:", 40, WHITE), (720, 270))
+            (my_font4.render("Level: " + str(round(level.level_number)), True, WHITE), (750, 30)),
+            (my_font.render("Score: " + str(round(score, 1)), True, WHITE), (715, 90)),
+            (my_font.render("Health: " + str(round(player.health, 1)), True, WHITE), (715, 125)),
+            (my_font.render("Power: " + str(round(bullet_dmg, 1)) + "/4", True, WHITE), (715, 160)),
+            (my_font.render("Bomb: " + str(round(bomb)), True, WHITE), (715, 195)),
+            (my_font2.render("Jerry the Epic Spaceman", True, WHITE), (650, 620)),
+            (my_font2.render(str(round(clock.get_fps(), 1)) + " FPS", True, WHITE), (890, 620)),
+            (my_font2.render("-------------------------------", True, WHITE), (660, 65)),
+            (my_font2.render("-------------------------------", True, WHITE), (660, 240)),
+            (my_font4.render("Inventory:", True, WHITE), (720, 270))
         ]
 
+        #update text
         for text, pos in texts:
             screen.blit(text, pos)
-            
+
+        #UI images for visual flair    
         screen.blit(coin_png, (680, 87))
         screen.blit(jerry, (680, 122))
         screen.blit(power_png, (680, 157))
         screen.blit(bomb_png, (680, 192))
-        screen.blit(duck_png, (705, 335))
 
+    #Start menu
     def draw_start_menu(screen):
-        screen.fill((0,0,0))
+        screen.fill((0, 0, 0))
         text = my_font.render("Press Q", True, WHITE)
         screen.blit(text, (400, 300))
         pygame.display.update()
 
+    #Game over menu
     def draw_game_over(screen):
-        screen.fill((0,0,0))
-        text = my_font.render("Game Over!  Press Q", True, WHITE)
+        screen.fill((0, 0, 0))
+        text = my_font.render("Game Over! Press Q", True, WHITE)
         screen.blit(text, (300, 300))
         pygame.display.update()
 
-
+    #Spawning function, sets the amount depending on a level, then appends the enemies to the enemies list which is then drawn in the main loop
     def spawn_enemies(level_number):
         num_enemies = 1
         if level_number == 2:
@@ -107,65 +134,85 @@ def main():
         elif level_number == 3:
             num_enemies = 10
 
-        for _ in range(num_enemies):
+        for _ in range(num_enemies): #append to enemy list
             enemies.append(Enemies(level, health))
             
+    #Spawning function, sets the amount depending on a level, then appends the objects to the objects list which is then drawn in the main loop
     def spawn_objects(level_number):
-        obj_number = 0
+        obj_number = 1
         if level_number == 2:
             obj_number = 1
         elif level_number == 3:
             obj_number = 10
 
-        for _ in range(obj_number):
-            object_list.append(Object(level))
+        for _ in range(obj_number): #append to object list
+            object_list.append(Objects(level))
 
+    #Initial spawn calls
     spawn_enemies(level.level_number)
     spawn_objects(level.level_number)
 
     while not done:
+        #setup
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-            
+
+            #if game state = start menu, pressning q changes it to game. While in game state it calls the draw_start_menu function drawing the start menu
             if game_state == 'start_menu':
                 draw_start_menu(screen)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    game_state = 'game'  
+                    game_state = 'game'
+                    fading = True
+                    fade_alpha = 255 #fully visible
 
+            #if the game state is game_over it calls the draw_game_over function drawing the game over menu, allowing q to change it back to the game state
             elif game_state == 'game_over':
                 draw_game_over(screen)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    items.clear()
+                    #initial gamesetup, clears all variables and spawns in the enemies and objects
                     game_state = 'game'
-                    level = Level(1)
-                    player = Player(level, health)
-                    bullet_dmg = 1
-                    enemies.clear()
-                    object_list.clear()
-                    spawn_enemies(level.level_number)
-                    spawn_objects(level.level_number)
-
+                    level = Level(1) #level set
+                    player = Player(level, health, pos_x, pos_y) #player initialization
+                    bullet_dmg = 1 #bullet damage
+                    event = pygame.event.Event(CUSTOM_EVENT)
+                    pygame.event.post(event) #runs the event to update the level code in the mainloop
 
             elif game_state == 'game':
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                        level.load_level(level.level_number + 1)
-                        player.rect.topleft = (80, 80)
-                        player.level = level
-                        enemies.clear()
-                        object_list.clear()
-                        spawn_enemies(level.level_number)
-                        spawn_objects(level.level_number)
+                #event that clears pior level and then sets up the next one
+                if event.type == CUSTOM_EVENT:
+                    fading = True
+                    fade_alpha = 255 #fully visible
+                    Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
+                    Objects.occupied_positions.clear()
+                    player.rect.topleft = (80, 80) #player position, for next level
+                    enemies.clear() #enemies list, clears screen of enemies
+                    power_list.clear() #likewise with power
+                    object_list.clear() #and keys
+                    spawn_enemies(level.level_number) #setup for next level
+                    spawn_objects(level.level_number) #setup for next level
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.mouse.get_pressed()[0]:  # Left click
-                        pos = player.rect.x + 15, player.rect.y + 15
-                        bullets.append(Bullet(*pos))
+                    if pygame.mouse.get_pressed()[0]: #left click only
+                        pos = player.rect.x + 15, player.rect.y + 15 #spawns incentre
+                        bullets.append(Bullet(*pos)) #appends bullets to the list
+                        
 
-                if bullet_dmg >= 4:
+                if bullet_dmg >= 4: #if damage is greater than 4 it sets it to 4 as a cap
                     bullet_dmg = 4
 
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:#fade and bomb 
+                    if bomb > 0:
+                        fading = True
+                        fade_alpha = 255 #fully visible
+                        bomb -= 1
+                        score += 100 * len(enemies)
+                        enemies.clear()
+
+        #game state
         if game_state == 'game':
             update_bullets(bullets, level.get_grid(), WIDTH)
 
@@ -175,20 +222,44 @@ def main():
                         enemy.health -= bullet_dmg
                         bullets.remove(bullet)
                         if enemy.health <= 0:
-                            enemies.remove(enemy)
+                            #Spawn power at the enemy's last pos
+                            power_spawn = Power(level, enemy.rect.x, enemy.rect.y)
+                            power_list.append(power_spawn)
+                            enemies.remove(enemy) #nemy death
                             score += 100
                         break
 
-            for objects in object_list[:]:
-                if player.rect.colliderect(objects.rect):
-                    object_list.remove(objects)
-                    if bullet_dmg != 4:
-                        bullet_dmg += 0.1
-                        score += 10
-                    else:
+            for power in power_list[:]:
+                if player.rect.colliderect(power.rect):
+                    power_list.remove(power)
+                    if power.duck:
+                        fading = True #easter egg in my game, 0.05% chance to get a duck item setting power to max
+                        fade_alpha = 255 #fully visible
                         bullet_dmg = 4
-                        score += 10
-                    break
+                        if duck_item not in items: #checks if item already in inventory incase you get super lucky ducky (unlocks secret ending)
+                            items.append('items/duck.png')
+                            secret_ending = True
+                    elif power.bomb:
+                        bomb += 1
+                    else: 
+                        if bullet_dmg < 4:
+                            bullet_dmg += 0.1
+                            score += 10
+                        else:
+                            bullet_dmg = 4
+                            score += 10
+                        break
+
+            #object list append code
+            for obj in object_list[:]:
+                if player.rect.colliderect(obj.rect):
+                    object_list.remove(obj)
+                    if level.level_number == 1:
+                        items.append('items/key.png')
+                    if level.level_number == 2:
+                        items.append('items/key1.png')
+                    if level.level_number == 3:
+                        items.append('items/key2.png')
 
             dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
             dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
@@ -196,6 +267,7 @@ def main():
 
             screen.fill(BLACK)
             draw_grid(screen, level)
+            inventory_grid()
 
             for bullet in bullets:
                 bullet.draw(screen)
@@ -205,19 +277,25 @@ def main():
                 enemy.collide_player(player)
                 enemy.draw(screen)
 
-            for objects in object_list:
-                objects.draw(screen)
+            for power in power_list:
+                power.draw(screen)
+
+            for obj in object_list:
+                obj.draw(screen)
 
             player.draw(screen)
-
-            x_positions = [690, 770, 850]
-            y_positions = [320, 400, 480]
-
-            for y in y_positions:
-                for x in x_positions:
-                    screen.blit(inventory, (x, y))
+            player.update_self()
 
             update_text()
+
+            #fading
+            if fading:
+                draw_fade_out(screen, fade_alpha)
+                fade_alpha -= 255 / 60 #Decrease alpha
+                if fade_alpha <= 0:
+                    fade_alpha = 0
+                    fading = False
+
             pygame.display.flip()
 
             clock.tick(60)
@@ -232,3 +310,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

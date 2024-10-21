@@ -13,10 +13,8 @@ class Bullet:
             self.dir = (0, -1)
         else:
             self.dir = (self.dir[0] / self.length, self.dir[1] / self.length)
-        self.angle = math.degrees(math.atan2(-self.dir[1], self.dir[0]))
 
-        self.bullet = pygame.image.load('tiles/player_bullet.png').convert_alpha()
-        self.bullet = pygame.transform.rotate(self.bullet, self.angle)
+        self.bullet = pygame.image.load('jerry/player_bullet.png').convert_alpha()
         self.rect = self.bullet.get_rect(center=self.pos)
         self.speed = 5
 

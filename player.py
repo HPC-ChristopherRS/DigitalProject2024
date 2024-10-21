@@ -1,44 +1,78 @@
 import pygame
 from settings import *
 from level import *
+from inventory import *
 
-class Player:
-    def __init__(self, level, health):
+state = 1
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self, level, health, pos_x, pos_y):
+        super().__init__() 
         self.level = level
-        self.rect = pygame.Rect(100, 100, 31, 31)
-        self.image = pygame.image.load('tiles/jerry.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
-        self.health = 5
+        self.health = health
+        self.sprites = []
+        self.is_animating = True 
+        self.current_sprite = 0
 
+        #load the images for the player animations
+        self.sprites.append(pygame.image.load('jerry/jerry.png').convert_alpha())
+        self.sprites.append(pygame.image.load('jerry/jerry.png').convert_alpha())
+        self.sprites.append(pygame.image.load('jerry/jerry1.png').convert_alpha())    
+        self.image = self.sprites[self.current_sprite]
+
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [pos_x, pos_y]
+
+    #animation, if False animation stops playing
+    def animate(self):
+        self.is_animating = True
+
+    def update_self(self):
+        #idle animation
+        if state == 1:
+            if self.is_animating:
+                self.current_sprite += 0.05 
+                if self.current_sprite >= len(self.sprites):
+                    self.current_sprite = 0
+                    self.is_animating = True
+                self.image = self.sprites[int(self.current_sprite)]
+
+    #movement handling, moves players dx and dy values, calling collision detection function to ensure they don't go through walls
     def move(self, dx, dy):
         self.rect.x += dx * 1.5
         self.check_collision(dx, 0)
         self.rect.y += dy * 1.5
         self.check_collision(0, dy)
 
+    #checks level grid for walls, if a wall is in the way the player will not move
     def check_collision(self, dx, dy):
         grid = self.level.get_grid() 
         for row in range(len(grid)):
             for column in range(len(grid[0])):
-                if grid[row][column] == 1 or grid[row][column] == 2 or grid[row][column] == 3 or grid[row][column] == 4 or grid[row][column] == 5 or grid[row][column] == 6 or grid[row][column] == 7 or grid[row][column] == 8 or grid[row][column] == 9 or grid[row][column] == 10 or grid[row][column] == 11 or grid[row][column] == 12:
+                if grid[row][column] in range (1,15): #range of tiles, 1-15, 0 is background so player glitches out of the level
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 
                         WIDTH, HEIGHT
                     )
                     if self.rect.colliderect(wall_rect):
-                        if dx > 0:  # Right
+                        if dx > 0: #right
                             self.rect.right = wall_rect.left
-                        if dx < 0:  # Left
+                        if dx < 0: #left
                             self.rect.left = wall_rect.right
-                        if dy > 0:  # Down
+                        if dy > 0: #down
                             self.rect.bottom = wall_rect.top
-                        if dy < 0:  # Up
+                        if dy < 0: #up
                             self.rect.top = wall_rect.bottom
    
-                        if grid[row][column] == 3:
-                             self.level.load_level(self.level.level_number + 1)
+                        if grid[row][column] in [2, 3, 14]: #tiles that player can interact with with a key
+                            key = 'items/key.png' if grid[row][column] == 2 else 'items/key1.png' if grid[row][column] == 3 else 'items/key2.png' #checks to see if key is held and if the player is touching the aliging tile
+                            if key in items:
+                                self.level.load_level(self.level.level_number + 1) #increases level number by 1
+                                event = pygame.event.Event(CUSTOM_EVENT)
+                                pygame.event.post(event) #runs the event to update the level code in the mainloop
 
+    #dash handling, checks direction from main and moves the player rect in the corresponding direction
     def dash(self, direction):
         new_rect = self.rect.copy()
         if direction == 'right':
@@ -62,9 +96,21 @@ class Player:
             new_rect.x -= DASH_DISTANCE
             new_rect.y += DASH_DISTANCE
 
-        if 0 <= new_rect.x <= 620 and 0 <= new_rect.y <= 620:
-            self.check_collision(new_rect.x - self.rect.x, new_rect.y - self.rect.y)
-            self.rect = new_rect
+        steps = 10 #steps to break the dash into, so it doesn't directly teleport to the new postition as you could teleport through walls (op)
+        dx = (new_rect.x - self.rect.x) / steps
+        dy = (new_rect.y - self.rect.y) / steps
 
+        #checks if the new rect is within the bounds of the level
+        for _ in range(steps):
+            if 0 <= self.rect.x + dx <= 620 and 0 <= self.rect.y + dy <= 620:
+                #move incrementally checking for collisions at each step
+                self.rect.x += dx
+                self.check_collision(dx, 0)
+                self.rect.y += dy
+                self.check_collision(0, dy)
+            else:
+                break #movement stops if player is out of bounds or collision is detected
+
+    #draws the player surface
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
