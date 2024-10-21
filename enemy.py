@@ -5,9 +5,6 @@ from settings import *
 from player import *
 from bullet import *
 
-enemy_x = [(30),(600)]
-enemy_y = [(30),(600)]
-
 class Enemies:
     occupied_positions = set() #class variable to track occupied positions
 
