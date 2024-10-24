@@ -3,39 +3,64 @@ from settings import *
 from level import *
 from inventory import *
 
-state = 1
+import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, level, health, pos_x, pos_y):
-        super().__init__() 
+    def __init__(self, level, health):
+        super().__init__()
         self.level = level
         self.health = health
         self.sprites = []
-        self.is_animating = True 
+        self.sprites2 = []
+        self.state = 1  #initial animation state
+        self.is_animating = True
         self.current_sprite = 0
+        self.click_time = None
 
         #load the images for the player animations
         self.sprites.append(pygame.image.load('jerry/jerry.png').convert_alpha())
         self.sprites.append(pygame.image.load('jerry/jerry.png').convert_alpha())
-        self.sprites.append(pygame.image.load('jerry/jerry1.png').convert_alpha())    
+        self.sprites.append(pygame.image.load('jerry/jerry1.png').convert_alpha())
+        self.sprites2.append(pygame.image.load('jerry/madjerry.png').convert_alpha())
         self.image = self.sprites[self.current_sprite]
 
         self.rect = self.image.get_rect()
-        self.rect.topleft = [pos_x, pos_y]
+        self.rect.topleft = [100, 294] #player spawn for first level
 
     #animation, if False animation stops playing
     def animate(self):
         self.is_animating = True
+        self.click_time = pygame.time.get_ticks() #save the time of last click
+        self.state = 2 #sets player state to 2 on click
+
+    def stop_animation(self):
+        self.is_animating = False
+        self.current_sprite = 0
 
     def update_self(self):
         #idle animation
-        if state == 1:
+        current_time = pygame.time.get_ticks()
+
+        #check time since last click
+        if self.click_time is not None and current_time - self.click_time >= 250:
+            self.state = 1 #after 0.25s goes back to idle animation
+            self.click_time = None #resets last click time
+
+        #handle animation for state 1 (idle)
+        if self.state == 1:
             if self.is_animating:
-                self.current_sprite += 0.05 
+                self.current_sprite += 0.05
                 if self.current_sprite >= len(self.sprites):
                     self.current_sprite = 0
-                    self.is_animating = True
                 self.image = self.sprites[int(self.current_sprite)]
+
+        #handle animation for state 2 (shooting)
+        elif self.state == 2:
+            if self.is_animating:
+                self.current_sprite += 0.05
+                if self.current_sprite >= len(self.sprites2):
+                    self.current_sprite = 0
+                self.image = self.sprites2[int(self.current_sprite)]
 
     #movement handling, moves players dx and dy values, calling collision detection function to ensure they don't go through walls
     def move(self, dx, dy):

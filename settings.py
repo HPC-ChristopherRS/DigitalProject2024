@@ -12,3 +12,6 @@ CUSTOM_EVENT = pygame.USEREVENT + 1 #custom event setup for level update
 bomb_chance = 0.10 #10 chance of a bomb (they are very op as they clear everything on screen)
 duck_chance = 0.05 #chance of spawning duck 1 = 100%, 0 = 0%
 duck_item = 'items/duck.png'
+
+
+animation_cooldown = 1000 #cooldown for enemy damage

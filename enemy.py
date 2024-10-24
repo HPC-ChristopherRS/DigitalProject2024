@@ -11,6 +11,11 @@ class Enemies:
     def __init__(self, level, health):
         self.level = level
         self.rect = pygame.Rect(0, 0, WIDTH, HEIGHT)
+        self.damage_cooldown = 1000 #cooldown for enemy damage
+        self.last_hit_time = pygame.time.get_ticks() #Last hit time
+        self.image = pygame.image.load('jerry/jerrbear.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
+        self.health = 5
 
         #define fixed spawn positions based on the level
         if level.level_number == 1:
@@ -22,9 +27,6 @@ class Enemies:
         elif level.level_number == 4:
             self.spawn_positions = [(555, 100), (555, 200), (555, 300), (555, 400), (555, 500), (555, 600)]
 
-        self.image = pygame.image.load('jerry/jerrbear.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
-        self.health = 5
         self.spawn()
 
     def spawn(self):
@@ -57,10 +59,13 @@ class Enemies:
     #checks collision and then damages the player
     def collide_player(self, player):
         if self.rect.colliderect(player.rect):
-            player.health -= 1
-            print(player.health)
-            if player.health == 0:
-                pass
+            current_time = pygame.time.get_ticks()
+            #checks time since last hit, if enough does damage
+            if current_time - self.last_hit_time >= self.damage_cooldown:
+                player.health -= 1
+                self.last_hit_time = current_time #reset timer
+                if player.health == 0:
+                    pass
 
     #checks for walls, if wall no move into wall, pushed out by 3. Checks the entire 20 by 20 2d array for walls, fun
     def check_collision(self, rect=None):

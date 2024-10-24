@@ -69,7 +69,7 @@ def main():
     health = 5 #health
     pos_x = 100 #starting x position
     pos_y = 100 #starting y position
-    player = Player(level, health, pos_x, pos_y) #inizalise player
+    player = Player(level, health) #inizalise player
     bullet_dmg = 1 #set bullet damage
     bomb = 3 #starting bomb amount
     score = 0 #score
@@ -176,7 +176,7 @@ def main():
                     #initial gamesetup, clears all variables and spawns in the enemies and objects
                     game_state = 'game'
                     level = Level(1) #level set
-                    player = Player(level, health, pos_x, pos_y) #player initialization
+                    player = Player(level, health) #player initialization
                     bullet_dmg = 1 #bullet damage
                     event = pygame.event.Event(CUSTOM_EVENT)
                     pygame.event.post(event) #runs the event to update the level code in the mainloop
@@ -188,7 +188,7 @@ def main():
                     fade_alpha = 255 #fully visible
                     Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
                     Objects.occupied_positions.clear()
-                    player.rect.topleft = (80, 80) #player position, for next level
+                    player.rect.topleft = (200, 200) #player position, for next level
                     enemies.clear() #enemies list, clears screen of enemies
                     power_list.clear() #likewise with power
                     object_list.clear() #and keys
@@ -199,8 +199,9 @@ def main():
                     if pygame.mouse.get_pressed()[0]: #left click only
                         pos = player.rect.x + 15, player.rect.y + 15 #spawns incentre
                         bullets.append(Bullet(*pos)) #appends bullets to the list
-                        
-
+                        player.state = 2 #hanges player state to 2 when clicked
+                        player.animate() #plays animation
+ 
                 if bullet_dmg >= 4: #if damage is greater than 4 it sets it to 4 as a cap
                     bullet_dmg = 4
 
