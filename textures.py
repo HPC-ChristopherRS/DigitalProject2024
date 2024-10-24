@@ -22,7 +22,7 @@ textures = {
 
 #background image imports
 background_image = pygame.image.load('tiles/rock_floor.png').convert()
-background_image2 = pygame.image.load('tiles/floor2.png').convert()
+background_image2 = pygame.image.load('tiles/inside_floor.png').convert()
 
 #inventory icons import
 jerry = pygame.image.load("jerry/jerry.png").convert()
