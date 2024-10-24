@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.sprites[self.current_sprite]
 
         self.rect = self.image.get_rect()
-        self.rect.topleft = [100, 294] #player spawn for first level
+        self.rect.topleft = [100, 304] #player spawn for first level
 
     #animation, if False animation stops playing
     def animate(self):
@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         #handle animation for state 1 (idle)
         if self.state == 1:
             if self.is_animating:
-                self.current_sprite += 0.05
+                self.current_sprite += 0.025
                 if self.current_sprite >= len(self.sprites):
                     self.current_sprite = 0
                 self.image = self.sprites[int(self.current_sprite)]
@@ -74,7 +74,7 @@ class Player(pygame.sprite.Sprite):
         grid = self.level.get_grid() 
         for row in range(len(grid)):
             for column in range(len(grid[0])):
-                if grid[row][column] in range (1,15): #range of tiles, 1-15, 0 is background so player glitches out of the level
+                if grid[row][column] in range (1,16): #range of tiles, 1-15, 0 is background so player glitches out of the level
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 
@@ -90,10 +90,16 @@ class Player(pygame.sprite.Sprite):
                         if dy < 0: #up
                             self.rect.top = wall_rect.bottom
    
-                        if grid[row][column] in [2, 3, 14]: #tiles that player can interact with with a key
+                        if grid[row][column] in [2, 3, 14, 15]: #tiles that player can interact with with a key
                             key = 'items/key.png' if grid[row][column] == 2 else 'items/key1.png' if grid[row][column] == 3 else 'items/key2.png' #checks to see if key is held and if the player is touching the aliging tile
                             if key in items:
-                                self.level.load_level(self.level.level_number + 1) #increases level number by 1
+                                self.level.load_level(self.level.level_number + 1)
+                                event = pygame.event.Event(CUSTOM_EVENT)
+                                pygame.event.post(event) #runs the event to update the level code in the mainloop
+                        
+                        if grid[row][column] in [15]: #tiles that player can interact with with a key
+                            if grid[row][column] == 15: #checks to see if key is held and if the player is touching the aliging tile
+                                self.level.load_level(self.level.level_number + 1)
                                 event = pygame.event.Event(CUSTOM_EVENT)
                                 pygame.event.post(event) #runs the event to update the level code in the mainloop
 

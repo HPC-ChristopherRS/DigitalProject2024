@@ -18,8 +18,8 @@ class Enemies:
         self.health = 5
 
         #define fixed spawn positions based on the level
-        if level.level_number == 1:
-            self.spawn_positions = [(500, 200), (500, 200), (500, 200)] #if the number of enemies exceeds spawn pos amount, they spawn at 0,0
+        if level.level_number == 2:
+            self.spawn_positions = [(500, 304)] #if the number of enemies exceeds spawn pos amount, they spawn at 0,0
         elif level.level_number == 2:
             self.spawn_positions = [(555, 200), (600, 200), (650, 200)]
         elif level.level_number == 3:

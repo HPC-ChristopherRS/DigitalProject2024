@@ -18,11 +18,12 @@ textures = {
     12: pygame.image.load('tiles/blank_wall.png').convert(),
     13: pygame.image.load('tiles/tv.png').convert_alpha(),
     14: pygame.image.load('tiles/keyhole2.png').convert_alpha(),
+    15: pygame.image.load('tiles/door1.png').convert_alpha(),
     }
 
 #background image imports
 background_image = pygame.image.load('tiles/rock_floor.png').convert()
-background_image2 = pygame.image.load('tiles/inside_floor.png').convert()
+background_image2 = pygame.image.load('tiles/floornohightlight.png').convert()
 
 #inventory icons import
 jerry = pygame.image.load("jerry/jerry.png").convert()
@@ -34,7 +35,7 @@ coin_png = pygame.image.load("items/coin.png").convert()
 def draw_grid(screen, level):
     grid = level.get_grid()
     #check level to set background tile
-    if level.level_number == 2 or level.level_number == 3:
+    if level.level_number == 3 or level.level_number == 4:
         #darws the textures ontop of the 20 by 20 grid
         for row in range(20):
             for column in range(20):
@@ -46,7 +47,7 @@ def draw_grid(screen, level):
                              (MARGIN + HEIGHT) * row + MARGIN])
 
     #check level to set background tile
-    elif level.level_number ==1:
+    elif level.level_number ==1 or level.level_number ==2:
         #darws the textures ontop of the 20 by 20 grid
         for row in range(20):
             for column in range(20):

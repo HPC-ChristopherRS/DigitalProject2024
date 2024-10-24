@@ -128,7 +128,7 @@ def main():
 
     #Spawning function, sets the amount depending on a level, then appends the enemies to the enemies list which is then drawn in the main loop
     def spawn_enemies(level_number):
-        num_enemies = 1
+        num_enemies = 0
         if level_number == 2:
             num_enemies = 1
         elif level_number == 3:
@@ -139,7 +139,7 @@ def main():
             
     #Spawning function, sets the amount depending on a level, then appends the objects to the objects list which is then drawn in the main loop
     def spawn_objects(level_number):
-        obj_number = 1
+        obj_number = 0
         if level_number == 2:
             obj_number = 1
         elif level_number == 3:
@@ -188,7 +188,7 @@ def main():
                     fade_alpha = 255 #fully visible
                     Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
                     Objects.occupied_positions.clear()
-                    player.rect.topleft = (200, 200) #player position, for next level
+                    player.rect.topleft = (35, 304) #player position, for next level
                     enemies.clear() #enemies list, clears screen of enemies
                     power_list.clear() #likewise with power
                     object_list.clear() #and keys

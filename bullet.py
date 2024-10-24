@@ -32,6 +32,6 @@ class Bullet:
         row = int(y // tile_size)
 
         if 0 <= col < len(grid[0]) and 0 <= row < len(grid):
-            if grid[row][col] == 1 or grid[row][col] == 2 or grid[row][col] == 3 or grid[row][col] == 4 or grid[row][col] == 5 or grid[row][col] == 6 or grid[row][col] == 7 or grid[row][col] == 8 or grid[row][col] == 9 or grid[row][col] == 10 or grid[row][col] == 11 or grid[row][col] == 12:
+            if grid[row][col] in range (1,16):
                 return True
         return False
