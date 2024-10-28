@@ -59,6 +59,11 @@ def main():
     pygame.init()
     pygame.display.set_caption("Jerry the Epic Spaceman") #games fantastic title
 
+    #sound imports
+    pygame.mixer.init()
+    gun = pygame.mixer.Sound('sound/test.wav')
+    gun.set_volume(0.5)
+
     #Font imports/setup
     my_font = pygame.font.Font("Daydream.ttf", 20)
     my_font2 = pygame.font.Font("Daydream.ttf", 8)
@@ -132,7 +137,7 @@ def main():
         if level_number == 2:
             num_enemies = 1
         elif level_number == 3:
-            num_enemies = 10
+            num_enemies = 3
 
         for _ in range(num_enemies): #append to enemy list
             enemies.append(Enemies(level, health))
@@ -140,10 +145,8 @@ def main():
     #Spawning function, sets the amount depending on a level, then appends the objects to the objects list which is then drawn in the main loop
     def spawn_objects(level_number):
         obj_number = 0
-        if level_number == 2:
+        if level_number == 5:
             obj_number = 1
-        elif level_number == 3:
-            obj_number = 10
 
         for _ in range(obj_number): #append to object list
             object_list.append(Objects(level))
@@ -184,11 +187,14 @@ def main():
             elif game_state == 'game':
                 #event that clears pior level and then sets up the next one
                 if event.type == CUSTOM_EVENT:
-                    fading = True
-                    fade_alpha = 255 #fully visible
                     Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
                     Objects.occupied_positions.clear()
-                    player.rect.topleft = (35, 304) #player position, for next level
+
+                    if level.level_number in range(1,5): #player positions, for next level, depends on level as different spawns
+                        player.rect.topleft = (35, 304)
+                    elif level.level_number == 5:
+                        player.rect.topleft = (304, 35)
+
                     enemies.clear() #enemies list, clears screen of enemies
                     power_list.clear() #likewise with power
                     object_list.clear() #and keys
@@ -197,6 +203,7 @@ def main():
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]: #left click only
+                        gun.play()
                         pos = player.rect.x + 15, player.rect.y + 15 #spawns incentre
                         bullets.append(Bullet(*pos)) #appends bullets to the list
                         player.state = 2 #hanges player state to 2 when clicked

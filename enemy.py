@@ -19,11 +19,9 @@ class Enemies:
 
         #define fixed spawn positions based on the level
         if level.level_number == 2:
-            self.spawn_positions = [(500, 304)] #if the number of enemies exceeds spawn pos amount, they spawn at 0,0
-        elif level.level_number == 2:
-            self.spawn_positions = [(555, 200), (600, 200), (650, 200)]
+            self.spawn_positions = [(500, 320)] #if the number of enemies exceeds spawn pos amount, they spawn at 0,0
         elif level.level_number == 3:
-            self.spawn_positions = [(555, 100), (555, 200), (555, 300), (555, 400), (555, 500), (555, 600)]
+            self.spawn_positions = [(555, 320), (555, 420), (555, 220)]
         elif level.level_number == 4:
             self.spawn_positions = [(555, 100), (555, 200), (555, 300), (555, 400), (555, 500), (555, 600)]
 
@@ -74,7 +72,7 @@ class Enemies:
             
         for row in range(len(self.level.grid)):
             for column in range(len(self.level.grid[0])):
-                if self.level.grid[row][column] in range(1, 13): #range of tiles, 1-13
+                if self.level.grid[row][column] in range(1, 16): #range of tiles, 1-13
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 

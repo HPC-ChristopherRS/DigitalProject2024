@@ -18,7 +18,8 @@ textures = {
     12: pygame.image.load('tiles/blank_wall.png').convert(),
     13: pygame.image.load('tiles/tv.png').convert_alpha(),
     14: pygame.image.load('tiles/keyhole2.png').convert_alpha(),
-    15: pygame.image.load('tiles/door1.png').convert_alpha(),
+    15: pygame.image.load('tiles/open_door.png').convert_alpha(),
+    16: pygame.image.load('tiles/closed_door.png').convert_alpha(),
     }
 
 #background image imports
@@ -34,20 +35,9 @@ coin_png = pygame.image.load("items/coin.png").convert()
 #code that draws the level grid textures, collsions still work without this
 def draw_grid(screen, level):
     grid = level.get_grid()
-    #check level to set background tile
-    if level.level_number == 3 or level.level_number == 4:
-        #darws the textures ontop of the 20 by 20 grid
-        for row in range(20):
-            for column in range(20):
-                tile_type = grid[row][column]
-                tile_image = textures.get(tile_type, background_image)
-            
-                screen.blit(tile_image, 
-                            [(MARGIN + WIDTH) * column + MARGIN,
-                             (MARGIN + HEIGHT) * row + MARGIN])
 
     #check level to set background tile
-    elif level.level_number ==1 or level.level_number ==2:
+    if level.level_number in range (1,16):
         #darws the textures ontop of the 20 by 20 grid
         for row in range(20):
             for column in range(20):

@@ -29,19 +29,16 @@ class Objects():
         self.level = level
         self.rect = pygame.Rect(0, 0, 32, 32)
 
-        if level.level_number == 1: #changes the sprite based on the level, as different key sprites depend on level
+        if level.level_number in range(1, 4): #changes the sprite based on the level, as different key sprites depend on level
             self.image = pygame.image.load('items/key.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
-            self.spawn_positions = [(200, 200), (200, 200), (200, 200)] #define fixed spawn positions based on the level x,y
-        elif level.level_number == 2:
-            self.image = pygame.image.load('items/key1.png').convert_alpha()
-            self.spawn_positions = [(200,300)]
-        elif level.level_number == 3:
-            self.image = pygame.image.load('items/key2.png').convert_alpha()
-            self.spawn_positions = [(200, 200), (200, 200), (200, 200), (200, 200), (200, 200), (200, 200)]       
-        elif level.level_number == 4:
+            self.spawn_positions = [(200, 200)] #define fixed spawn positions based on the level x,y     
+        elif level.level_number == 5:
             self.image = pygame.image.load('items/key3.png').convert_alpha()
-            self.spawn_positions = [(200, 200), (200, 200), (200, 200), (200, 200), (200, 200), (200, 200)]        
+            self.spawn_positions = [(304, 176)]     
+        elif level.level_number == 6:
+            self.image = pygame.image.load('items/key3.png').convert_alpha()
+            self.spawn_positions = [(320, 128)]   
         self.spawn()
 
     def spawn(self):
