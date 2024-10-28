@@ -62,7 +62,9 @@ def main():
     #sound imports
     pygame.mixer.init()
     gun = pygame.mixer.Sound('sound/test.wav')
-    gun.set_volume(0.5)
+    level_music = pygame.mixer.Sound('sound/Music.wav')
+    gun.set_volume(0.2)
+    level_music.set_volume(1)
 
     #Font imports/setup
     my_font = pygame.font.Font("Daydream.ttf", 20)
@@ -87,6 +89,7 @@ def main():
     secret_ending = False #...
     last_pressed_time = 0 #timer setup variable for dash cooldown
     clock = pygame.time.Clock() #clock setup
+    level_music.play(-1)
 
     #fading variables
     fade_alpha = 0 #fully transparent
@@ -119,9 +122,9 @@ def main():
 
     #Start menu
     def draw_start_menu(screen):
-        screen.fill((0, 0, 0))
-        text = my_font.render("Press Q", True, WHITE)
-        screen.blit(text, (400, 300))
+        titleimage = pygame.image.load("tiles/jerrytitle.png")
+        imagerect = titleimage.get_rect()
+        screen.blit(titleimage, imagerect)
         pygame.display.update()
 
     #Game over menu
@@ -230,7 +233,7 @@ def main():
                         enemy.health -= bullet_dmg
                         bullets.remove(bullet)
                         if enemy.health <= 0:
-                            #Spawn power at the enemy's last pos
+                            #Spawn item at the enemy's last pos
                             power_spawn = Power(level, enemy.rect.x, enemy.rect.y)
                             power_list.append(power_spawn)
                             enemies.remove(enemy) #nemy death

@@ -31,6 +31,7 @@ jerry = pygame.image.load("jerry/jerry.png").convert()
 power_png = pygame.image.load("items/power.png").convert()
 bomb_png = pygame.image.load("items/bomb.png").convert()
 coin_png = pygame.image.load("items/coin.png").convert()
+duck_item = 'items/duck.png'
 
 #code that draws the level grid textures, collsions still work without this
 def draw_grid(screen, level):
