@@ -26,7 +26,7 @@ def inventory_grid():
         image = pygame.transform.scale(image, (CELL_SIZE, CELL_SIZE)) #change size of the cellbackground
         screen.blit(image, (x, y)) #draw the cell/background
 
-    #reused code from cells
+    #reused code from cells, does exactly the same thing but with list being drawn instead of cells
     for i, item in enumerate(items):
         row = i // GRID_SIZE
         col = i % GRID_SIZE

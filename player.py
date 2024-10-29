@@ -2,7 +2,6 @@ import pygame
 from settings import *
 from level import *
 from inventory import *
-
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -71,10 +70,11 @@ class Player(pygame.sprite.Sprite):
 
     #checks level grid for walls, if a wall is in the way the player will not move
     def check_collision(self, dx, dy):
+        global game_state
         grid = self.level.get_grid() 
         for row in range(len(grid)):
             for column in range(len(grid[0])):
-                if grid[row][column] in range (1,16): #range of tiles, 1-15, 0 is background so player glitches out of the level
+                if grid[row][column] in range (1,17) or grid[row][column] == (17) or grid[row][column] == (19): #range of tiles, 1-15, 0 is background so player glitches out of the level
                     wall_rect = pygame.Rect(
                         (MARGIN + WIDTH) * column + MARGIN, 
                         (MARGIN + HEIGHT) * row + MARGIN, 
@@ -90,18 +90,20 @@ class Player(pygame.sprite.Sprite):
                         if dy < 0: #up
                             self.rect.top = wall_rect.bottom
    
-                        if grid[row][column] in [2, 3, 14, 15]: #tiles that player can interact with with a key
-                            key = 'items/key.png' if grid[row][column] == 2 else 'items/key1.png' if grid[row][column] == 3 else 'items/key2.png' #checks to see if key is held and if the player is touching the aliging tile
+                        if grid[row][column] in [2, 3, 19]: #tiles that player can interact with with a key
+                            key = 'items/key.png' if grid[row][column] == 2 else 'items/key1.png' if grid[row][column] == 3 else 'items/key3.png' #checks to see if key is held and if the player is touching the aliging tile
                             if key in items:
-                                self.level.load_level(self.level.level_number + 1)
                                 event = pygame.event.Event(CUSTOM_EVENT)
+                                self.level.load_level(self.level.level_number + 1)
                                 pygame.event.post(event) #runs the event to update the level code in the mainloop
                         
                         if grid[row][column] in [15]: #tiles that player can interact with with a key
-                            if grid[row][column] == 15: #checks to see if key is held and if the player is touching the aliging tile
-                                self.level.load_level(self.level.level_number + 1)
-                                event = pygame.event.Event(CUSTOM_EVENT)
-                                pygame.event.post(event) #runs the event to update the level code in the mainloop
+                            event = pygame.event.Event(CUSTOM_EVENT)
+                            self.level.load_level(self.level.level_number + 1)
+                            pygame.event.post(event) #runs the event to update the level code in the mainloop
+
+                        if grid[row][column] in [17]: #if = 17, the players health is set to 5, the maximum allowing healing
+                            self.health = 5
 
     #dash handling, checks direction from main and moves the player rect in the corresponding direction
     def dash(self, direction):

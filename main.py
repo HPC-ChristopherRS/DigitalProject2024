@@ -134,6 +134,13 @@ def main():
         screen.blit(text, (300, 300))
         pygame.display.update()
 
+    #Game win menu
+    def draw_game_win(screen):
+        screen.fill((0, 0, 0))
+        text = my_font.render("Game win! Press Q", True, WHITE)
+        screen.blit(text, (300, 300))
+        pygame.display.update()
+
     #Spawning function, sets the amount depending on a level, then appends the enemies to the enemies list which is then drawn in the main loop
     def spawn_enemies(level_number):
         num_enemies = 0
@@ -141,6 +148,16 @@ def main():
             num_enemies = 1
         elif level_number == 3:
             num_enemies = 3
+        elif level_number == 7:
+            num_enemies = 6
+        elif level_number == 9:
+            num_enemies = 7
+        elif level_number == 11:
+            num_enemies = 10
+        elif level_number == 12:
+            num_enemies = 12
+        elif level_number == 14:
+            num_enemies = 15
 
         for _ in range(num_enemies): #append to enemy list
             enemies.append(Enemies(level, health))
@@ -148,7 +165,7 @@ def main():
     #Spawning function, sets the amount depending on a level, then appends the objects to the objects list which is then drawn in the main loop
     def spawn_objects(level_number):
         obj_number = 0
-        if level_number == 5:
+        if level_number == 5 or level_number == 9 or level_number == 14:
             obj_number = 1
 
         for _ in range(obj_number): #append to object list
@@ -181,6 +198,20 @@ def main():
                     items.clear()
                     #initial gamesetup, clears all variables and spawns in the enemies and objects
                     game_state = 'game'
+                    score = 0
+                    level = Level(1) #level set
+                    player = Player(level, health) #player initialization
+                    bullet_dmg = 1 #bullet damage
+                    event = pygame.event.Event(CUSTOM_EVENT)
+                    pygame.event.post(event) #runs the event to update the level code in the mainloop
+
+            elif game_state == 'game_win':
+                draw_game_win(screen)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    items.clear()
+                    #initial gamesetup, clears all variables and spawns in the enemies and objects
+                    game_state = 'game'
+                    score = 0
                     level = Level(1) #level set
                     player = Player(level, health) #player initialization
                     bullet_dmg = 1 #bullet damage
@@ -188,16 +219,23 @@ def main():
                     pygame.event.post(event) #runs the event to update the level code in the mainloop
 
             elif game_state == 'game':
+                if level.level_number >= 15:
+                    game_state = 'game_win'
                 #event that clears pior level and then sets up the next one
                 if event.type == CUSTOM_EVENT:
-                    Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
-                    Objects.occupied_positions.clear()
-
                     if level.level_number in range(1,5): #player positions, for next level, depends on level as different spawns
                         player.rect.topleft = (35, 304)
                     elif level.level_number == 5:
                         player.rect.topleft = (304, 35)
+                    elif level.level_number in range(6,9):
+                        player.rect.topleft = (35, 304)
+                    elif level.level_number in range(10):
+                        player.rect.topleft = (304, 35)
+                    elif level.level_number in range(10,16):
+                        player.rect.topleft = (35, 304)
 
+                    Enemies.occupied_positions.clear() #if not done they spawn at 0,0 because the positions are taken up
+                    Objects.occupied_positions.clear()
                     enemies.clear() #enemies list, clears screen of enemies
                     power_list.clear() #likewise with power
                     object_list.clear() #and keys
@@ -265,12 +303,12 @@ def main():
             for obj in object_list[:]:
                 if player.rect.colliderect(obj.rect):
                     object_list.remove(obj)
-                    if level.level_number == 1:
+                    if level.level_number == 5:
                         items.append('items/key.png')
-                    if level.level_number == 2:
+                    if level.level_number == 9:
                         items.append('items/key1.png')
-                    if level.level_number == 3:
-                        items.append('items/key2.png')
+                    if level.level_number == 14:
+                        items.append('items/key3.png')
 
             dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
             dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2

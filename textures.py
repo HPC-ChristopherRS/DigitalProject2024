@@ -20,6 +20,9 @@ textures = {
     14: pygame.image.load('tiles/keyhole2.png').convert_alpha(),
     15: pygame.image.load('tiles/open_door.png').convert_alpha(),
     16: pygame.image.load('tiles/closed_door.png').convert_alpha(),
+    17: pygame.image.load('tiles/heal_top (1).png').convert_alpha(),
+    18: pygame.image.load('tiles/heal_top (2).png').convert_alpha(),
+    19: pygame.image.load('tiles/keyhole3.png').convert_alpha(),
     }
 
 #background image imports
@@ -38,12 +41,22 @@ def draw_grid(screen, level):
     grid = level.get_grid()
 
     #check level to set background tile
-    if level.level_number in range (1,16):
+    if level.level_number in range (1,9):
         #darws the textures ontop of the 20 by 20 grid
         for row in range(20):
             for column in range(20):
                 tile_type = grid[row][column]
                 tile_image = textures.get(tile_type, background_image2)
+            
+                screen.blit(tile_image, 
+                            [(MARGIN + WIDTH) * column + MARGIN,
+                             (MARGIN + HEIGHT) * row + MARGIN])
+    elif level.level_number in range (9,15):
+        #darws the textures ontop of the 20 by 20 grid
+        for row in range(20):
+            for column in range(20):
+                tile_type = grid[row][column]
+                tile_image = textures.get(tile_type, background_image)
             
                 screen.blit(tile_image, 
                             [(MARGIN + WIDTH) * column + MARGIN,
