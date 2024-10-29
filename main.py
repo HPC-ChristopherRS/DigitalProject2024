@@ -199,6 +199,7 @@ def main():
                     #initial gamesetup, clears all variables and spawns in the enemies and objects
                     game_state = 'game'
                     score = 0
+                    bomb = 3
                     level = Level(1) #level set
                     player = Player(level, health) #player initialization
                     bullet_dmg = 1 #bullet damage
@@ -212,6 +213,7 @@ def main():
                     #initial gamesetup, clears all variables and spawns in the enemies and objects
                     game_state = 'game'
                     score = 0
+                    bomb = 3
                     level = Level(1) #level set
                     player = Player(level, health) #player initialization
                     bullet_dmg = 1 #bullet damage
