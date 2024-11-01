@@ -28,13 +28,16 @@ def inventory_grid():
 
     #reused code from cells, does exactly the same thing but with list being drawn instead of cells
     for i, item in enumerate(items):
+        if i >= 9:  #Limits to the first 9 items
+            break
+    
         row = i // GRID_SIZE
         col = i % GRID_SIZE
-        
+
         x = col * CELL_SIZE +685
         y = row * CELL_SIZE +310
 
         image = pygame.image.load(item)
         image = pygame.transform.scale(image, (CELL_SIZE, CELL_SIZE))
         screen.blit(image, (x, y))
-
+        

@@ -1,3 +1,18 @@
+"""
+Jerry the Epic Spaceman 
+
+Author:
+    Christopher Reynolds Shepherd
+Date:
+    1-11-2024
+Description: 
+    This is a project for my year 13 digital class. 
+    It is an adventure game that consits of collecting objects to escape from an otherworldy planet. 
+
+Version:
+    1.0
+"""
+
 import pygame
 from level import *
 from player import *
@@ -47,7 +62,7 @@ def handle_dash_input(player, keys, current_time, last_pressed_time):
     #timer for dash cooldown
     return last_pressed_time
 
-#draws fade out effect for bombs, levels, and pretty much everything I love this thing
+#draws fade out effect for bombs, levels
 def draw_fade_out(screen, alpha):
     fade_surface = pygame.Surface((640, 640)) #rect
     fade_surface.fill((255, 255, 255)) #color
@@ -86,7 +101,6 @@ def main():
     bullets = [] #list for bullets to spawn
     game_state = "start_menu" #initial game state
     done = False #game loop setup variable
-    secret_ending = False #...
     last_pressed_time = 0 #timer setup variable for dash cooldown
     clock = pygame.time.Clock() #clock setup
     level_music.play(-1)
@@ -122,23 +136,35 @@ def main():
 
     #Start menu
     def draw_start_menu(screen):
-        titleimage = pygame.image.load("tiles/jerrytitle.png")
-        imagerect = titleimage.get_rect()
-        screen.blit(titleimage, imagerect)
+        screen.fill((0, 0, 0))
+        text = my_font.render("Jerry the Epic Spaceman", True, WHITE)
+        screen.blit(text, (270, 240))
+        text2 = my_font.render("Press Q", True, WHITE)
+        screen.blit(text2, (400, 340))
+        text3 = my_font.render("V 1.0", True, WHITE)
+        screen.blit(text3, (20, 600))
         pygame.display.update()
 
     #Game over menu
     def draw_game_over(screen):
         screen.fill((0, 0, 0))
-        text = my_font.render("Game Over! Press Q", True, WHITE)
-        screen.blit(text, (300, 300))
+        text = my_font.render("Game Over", True, WHITE)
+        screen.blit(text, (380, 240))
+        text2 = my_font.render("Press Q", True, WHITE)
+        screen.blit(text2, (400, 340))
+        text3 = my_font.render("V 1.0", True, WHITE)
+        screen.blit(text3, (20, 600))
         pygame.display.update()
 
     #Game win menu
     def draw_game_win(screen):
         screen.fill((0, 0, 0))
-        text = my_font.render("Game win! Press Q", True, WHITE)
-        screen.blit(text, (300, 300))
+        text = my_font.render("Game Won", True, WHITE)
+        screen.blit(text, (380, 240))
+        text2 = my_font.render("Press Q", True, WHITE)
+        screen.blit(text2, (400, 340))
+        text3 = my_font.render("V 1.0", True, WHITE)
+        screen.blit(text3, (20, 600))
         pygame.display.update()
 
     #Spawning function, sets the amount depending on a level, then appends the enemies to the enemies list which is then drawn in the main loop
@@ -269,14 +295,14 @@ def main():
 
             for bullet in bullets[:]:
                 for enemy in enemies[:]:
-                    if bullet.rect.colliderect(enemy.rect):
-                        enemy.health -= bullet_dmg
+                    if bullet.rect.colliderect(enemy.rect): #checks if bullet collides with enemy
+                        enemy.health -= bullet_dmg #damages enemy
                         bullets.remove(bullet)
                         if enemy.health <= 0:
                             #Spawn item at the enemy's last pos
                             power_spawn = Power(level, enemy.rect.x, enemy.rect.y)
-                            power_list.append(power_spawn)
-                            enemies.remove(enemy) #nemy death
+                            power_list.append(power_spawn) #spawns power
+                            enemies.remove(enemy) #enemy death
                             score += 100
                         break
 
@@ -289,15 +315,14 @@ def main():
                         bullet_dmg = 4
                         if duck_item not in items: #checks if item already in inventory incase you get super lucky ducky (unlocks secret ending)
                             items.append('items/duck.png')
-                            secret_ending = True
                     elif power.bomb:
                         bomb += 1
                     else: 
-                        if bullet_dmg < 4:
+                        if bullet_dmg < 4: #if power is 4 it stops increasing
                             bullet_dmg += 0.1
                             score += 10
                         else:
-                            bullet_dmg = 4
+                            bullet_dmg = 4 #sets a maximum for power incase it still goes up
                             score += 10
                         break
 
@@ -312,34 +337,42 @@ def main():
                     if level.level_number == 14:
                         items.append('items/key3.png')
 
+            #player movement key handling, if pressed its equal to one, if not pressed its equal to zero
             dx = (keys[pygame.K_d] - keys[pygame.K_a]) * 2
             dy = (keys[pygame.K_s] - keys[pygame.K_w]) * 2
             player.move(dx, dy)
 
+            #drawing all objects/features
             screen.fill(BLACK)
             draw_grid(screen, level)
             inventory_grid()
 
+            #drawing bullet list
             for bullet in bullets:
                 bullet.draw(screen)
+            #drawing and handling enemys
             for enemy in enemies:
                 enemy.move_towards_player(player, speed)
                 enemy.check_collision()
                 enemy.collide_player(player)
                 enemy.draw(screen)
 
+            #drawing powers
             for power in power_list:
                 power.draw(screen)
 
+            #drawing objects
             for obj in object_list:
                 obj.draw(screen)
 
+            #drawing player
             player.draw(screen)
             player.update_self()
 
+            #updates text
             update_text()
 
-            #fading
+            #fading for bomb
             if fading:
                 draw_fade_out(screen, fade_alpha)
                 fade_alpha -= 255 / 60 #Decrease alpha
@@ -351,6 +384,7 @@ def main():
 
             clock.tick(60)
 
+            #dash lasted pressed time setup
             last_pressed_time = handle_dash_input(player, keys, current_time, last_pressed_time)
 
             # Check for game over

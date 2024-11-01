@@ -326,7 +326,7 @@ class Level:
 
     def load_level(self, level_number):
         self.level_number = level_number
-        self.grid = self.create_grid() #removes past level
+        self.grid = self.create_grid() 
 
     def get_grid(self):
-        return self.grid 
+        return self.grid #returns the 220by20 grid
